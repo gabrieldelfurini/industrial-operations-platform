@@ -1,6 +1,8 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/IndustrialOps.Api/IndustrialOps.Api.csproj" />
     <Project Path="src/IndustrialOps.Application/IndustrialOps.Application.csproj" />
     <Project Path="src/IndustrialOps.Domain/IndustrialOps.Domain.csproj" />
+    <Project Path="src/IndustrialOps.Infrastructure/IndustrialOps.Infrastructure.csproj" />
   </Folder>
 </Solution>
