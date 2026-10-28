@@ -1,0 +1,23 @@
+# Local PostgreSQL for development (alternative to a native installation).
+# Port 5433 on the host matches the connection string in appsettings.Development.json.
+#   docker compose up -d
+services:
+  postgres:
+    image: postgres:17
+    container_name: industrialops-postgres
+    environment:
+      POSTGRES_DB: industrialops
+      POSTGRES_USER: industrialops
+      POSTGRES_PASSWORD: industrialops_dev # development only
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U industrialops -d industrialops"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres-data:

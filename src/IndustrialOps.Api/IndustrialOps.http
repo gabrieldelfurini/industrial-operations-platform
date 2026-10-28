@@ -1,0 +1,99 @@
+### Industrial Operations Platform - manual API tests
+### Open in VS Code (REST Client extension), Visual Studio or Rider and click "Send Request".
+### Run the API first:  dotnet run --project src/IndustrialOps.Api
+
+@baseUrl = http://localhost:5080/api
+@productId = 0199a1b2-0000-7000-8000-000000000001
+@workCenterId = 0199a1b2-0000-7000-8000-000000000101
+
+### ---------- Products ----------
+
+GET {{baseUrl}}/products
+
+###
+GET {{baseUrl}}/products?includeInactive=true
+
+###
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "code": "PRD-200",
+  "name": "Pump Impeller",
+  "unitOfMeasure": "UN"
+}
+
+### Validation error (400): invalid code, empty name, unit too long
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "code": "bad code!",
+  "name": "",
+  "unitOfMeasure": "VERYLONGUNIT"
+}
+
+### Duplicated code (409)
+POST {{baseUrl}}/products
+Content-Type: application/json
+
+{
+  "code": "PRD-001",
+  "name": "Duplicate",
+  "unitOfMeasure": "UN"
+}
+
+### Not found (404)
+GET {{baseUrl}}/products/00000000-0000-0000-0000-000000000000
+
+### ---------- Work centers ----------
+
+GET {{baseUrl}}/work-centers
+
+### ---------- Production order: full lifecycle ----------
+
+# @name createOrder
+POST {{baseUrl}}/production-orders
+Content-Type: application/json
+
+{
+  "productId": "{{productId}}",
+  "workCenterId": "{{workCenterId}}",
+  "plannedQuantity": 500,
+  "plannedStart": "2026-11-02T08:00:00-03:00",
+  "plannedEnd": "2026-11-02T17:00:00-03:00"
+}
+
+###
+@orderId = {{createOrder.response.body.$.id}}
+
+### Business rule violation (422): cannot start a Planned order
+POST {{baseUrl}}/production-orders/{{orderId}}/start
+
+###
+POST {{baseUrl}}/production-orders/{{orderId}}/release
+
+###
+POST {{baseUrl}}/production-orders/{{orderId}}/start
+
+###
+POST {{baseUrl}}/production-orders/{{orderId}}/reports
+Content-Type: application/json
+
+{
+  "goodQuantity": 480,
+  "scrapQuantity": 12.5,
+  "notes": "Shift 1"
+}
+
+###
+GET {{baseUrl}}/production-orders/{{orderId}}/reports
+
+###
+POST {{baseUrl}}/production-orders/{{orderId}}/complete
+
+###
+GET {{baseUrl}}/production-orders/{{orderId}}
+
+###
+GET {{baseUrl}}/production-orders?status=Completed

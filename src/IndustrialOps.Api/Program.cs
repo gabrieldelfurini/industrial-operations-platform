@@ -16,8 +16,12 @@ builder.Services
         options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
     })
     .AddJsonOptions(options =>
+    {
         // Enums travel as text ("InProgress") instead of numbers.
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        // Malformed JSON returns a generic message instead of internal type names.
+        options.AllowInputFormatterExceptionMessages = false;
+    });
 
 // Global error handling: every error response follows RFC 9457 (application/problem+json).
 builder.Services.AddProblemDetails(options =>
