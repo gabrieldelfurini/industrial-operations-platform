@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/IndustrialOps.Application/IndustrialOps.Application.csproj" />
+    <Project Path="src/IndustrialOps.Domain/IndustrialOps.Domain.csproj" />
+  </Folder>
+</Solution>
